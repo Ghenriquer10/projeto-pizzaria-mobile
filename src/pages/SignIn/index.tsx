@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../../contexts/AuthContext';
+
 import {
     View,
     Text,
@@ -10,15 +12,17 @@ import {
 
 export default function SignIn() {
 
+    const { signIn } = useContext(AuthContext)
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    function handleLogin() {
+    async function handleLogin() {
         if (email === '' || password === '') {
             alert('Preencha os campos!')
             return
         }
-        console.log('Email digitado: ' + email)
+        await signIn({ email, password })
     }
 
     return (
