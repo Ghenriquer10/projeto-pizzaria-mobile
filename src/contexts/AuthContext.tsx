@@ -1,11 +1,14 @@
-import React, { useState, createContext, ReactNode } from 'react';
+import React, { useState, createContext, ReactNode, useEffect } from 'react';
 import { api } from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type AuthContextData = {
     user: UserProps;
     IsAuthenticated: boolean;
-    signIn: (credentials: SignInProps) => Promise<void>
+    signIn: (credentials: SignInProps) => Promise<void>;
+    loadingAuth: boolean;
+    loading: boolean;
+    signOut: () => Promise<void>
 }
 
 type UserProps = {
@@ -36,8 +39,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
     })
 
     const [loadingAuth, setLoadingAuth] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     const IsAuthenticated = !!user.name;
+
+    useEffect(() => {
+        async function getUser() {
+            const userInfo = await AsyncStorage.getItem('@userPizzaria');
+            let hasUser: UserProps = JSON.parse(userInfo || '{}');
+
+            if (Object.keys(hasUser).length > 0) {
+                api.defaults.headers.common['Authorization'] = `Bearer ${hasUser.token}`
+                setUser({
+                    id: hasUser.id,
+                    name: hasUser.name,
+                    email: hasUser.email,
+                    token: hasUser.token
+                })
+            }
+
+            setLoading(false)
+        }
+
+        getUser()
+    }, [])
 
     async function signIn({ email, password }: SignInProps) {
         setLoadingAuth(true)
@@ -70,8 +95,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
     }
 
+    async function signOut() {
+        await AsyncStorage.clear()
+            .then(() => {
+                setUser({
+                    id: '',
+                    name: '',
+                    email: '',
+                    token: ''
+                })
+            })
+    }
+
     return (
-        <AuthContext.Provider value={{ user, IsAuthenticated, signIn }}>
+        <AuthContext.Provider
+            value={{
+                user,
+                IsAuthenticated,
+                signIn,
+                loadingAuth,
+                loading,
+                signOut
+            }}>
             {children}
         </AuthContext.Provider>
     )
