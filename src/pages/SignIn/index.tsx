@@ -54,7 +54,7 @@ export default function SignIn() {
                         {loadingAuth ? (
                             <ActivityIndicator size={25} color='#fff' />
                         ) : (
-                            <Text style={styles.buttonText}>Acessar</Text>
+                            <Text style={styles.textButton}>Acessar</Text>
                         )}
                     </TouchableOpacity>
                 ) : (
@@ -62,7 +62,7 @@ export default function SignIn() {
                         {loadingAuth ? (
                             <ActivityIndicator size={25} color='#fff' />
                         ) : (
-                            <Text style={styles.buttonText}>Acessar</Text>
+                            <Text style={styles.textButton}>Acessar</Text>
                         )}
                     </TouchableOpacity>
                 )}
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
 
-    buttonText: {
+    textButton: {
         color: '#ffffff',
         fontSize: 20
     }
