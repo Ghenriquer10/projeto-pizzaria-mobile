@@ -13,6 +13,9 @@ import {
 
 export default function SignIn() {
 
+    // Através do contexto da aplicação temos acesso em todos os componentes a suas principais funções
+    // Nesse caso do Login passando como parâmetro o email e senha, além do loading que é utilizando na requisição
+
     const { signIn, loadingAuth } = useContext(AuthContext)
 
     const [email, setEmail] = useState('');

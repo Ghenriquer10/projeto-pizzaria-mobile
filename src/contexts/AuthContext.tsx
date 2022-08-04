@@ -65,6 +65,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }, [])
 
     async function signIn({ email, password }: SignInProps) {
+
         setLoadingAuth(true)
 
         try {
