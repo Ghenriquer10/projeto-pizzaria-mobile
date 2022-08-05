@@ -41,6 +41,15 @@ export default function Order() {
                     onChangeText={setQtdOrder}
                 />
             </View>
+            <View style={styles.actions}>
+                <TouchableOpacity style={styles.buttonAdd}>
+                    <Text style={styles.text}>+</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.buttonNext}>
+                    <Text style={styles.text}>Avançar</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }
@@ -87,5 +96,32 @@ const styles = StyleSheet.create({
 
     qtdInput: {
 
+    },
+
+    actions: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20
+    },
+
+    buttonAdd: {
+        height: 50,
+        backgroundColor: '#33C4FF',
+        width: '30%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    text: {
+        color: '#fff',
+        fontSize: 20,
+        fontWeight: 'bold'
+    },
+
+    buttonNext: {
+        backgroundColor: 'green',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '60%'
     }
 })
