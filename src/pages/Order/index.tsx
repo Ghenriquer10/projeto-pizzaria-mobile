@@ -1,7 +1,8 @@
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { Feather } from '@expo/vector-icons'
+import { api } from '../../services/api';
 
 type RouteDetailParams = {
     Order: {
@@ -10,9 +11,28 @@ type RouteDetailParams = {
     }
 }
 
+
+
 type OrderRouteProps = RouteProp<RouteDetailParams, 'Order'>
 
 export default function Order() {
+
+    const navigation = useNavigation()
+
+    async function handleDeleteTable() {
+        try {
+            await api.delete('/order', {
+                params: {
+                    order_id: route.params?.order_id
+                }
+            })
+
+            navigation.goBack();
+
+        } catch (err) {
+            console.log('Algo deu errado' + err)
+        }
+    }
 
     const [qtdOrder, setQtdOrder] = useState();
 
@@ -22,7 +42,9 @@ export default function Order() {
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Mesa {route.params.table}</Text>
-                <Feather name='trash-2' size={35} color='red' />
+                <TouchableOpacity onPress={handleDeleteTable}>
+                    <Feather name='trash-2' size={35} color='red' />
+                </TouchableOpacity>
             </View>
             <TouchableOpacity style={styles.input}>
                 <Text style={{ color: '#fff' }}>Pizzas</Text>
@@ -38,7 +60,6 @@ export default function Order() {
                     keyboardType={'numeric'}
                     placeholder={'0'}
                     value={qtdOrder}
-                    onChangeText={setQtdOrder}
                 />
             </View>
             <View style={styles.actions}>
