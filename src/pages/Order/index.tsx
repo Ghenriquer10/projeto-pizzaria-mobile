@@ -1,5 +1,5 @@
+import React, { useState, useEffect } from 'react'
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { Feather } from '@expo/vector-icons'
 import { api } from '../../services/api';
@@ -11,11 +11,24 @@ type RouteDetailParams = {
     }
 }
 
-
+type CategoryProps = {
+    id: string
+    name: string
+}
 
 type OrderRouteProps = RouteProp<RouteDetailParams, 'Order'>
 
 export default function Order() {
+
+    useEffect(() => {
+        async function loadCategory() {
+            const response = await api.get('/category')
+            setCategory(response.data)
+            setCategorySelected(response.data[0])
+        }
+
+        loadCategory()
+    }, [])
 
     const navigation = useNavigation()
 
@@ -34,7 +47,9 @@ export default function Order() {
         }
     }
 
-    const [qtdOrder, setQtdOrder] = useState();
+    const [category, setCategory] = useState<CategoryProps[] | []>([])
+    const [categorySelected, setCategorySelected] = useState<CategoryProps>()
+    const [qtdAmount, setQtdAmount] = useState('1');
 
     const route = useRoute<OrderRouteProps>();
 
@@ -46,11 +61,16 @@ export default function Order() {
                     <Feather name='trash-2' size={35} color='red' />
                 </TouchableOpacity>
             </View>
+
+            {category.length !== 0 && (
+                <TouchableOpacity style={styles.input}>
+                    <Text style={{ color: '#fff' }}>
+                        {categorySelected?.name}
+                    </Text>
+                </TouchableOpacity>
+            )}
             <TouchableOpacity style={styles.input}>
-                <Text style={{ color: '#fff' }}>Pizzas</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.input}>
-                <Text style={{ color: '#fff' }}>Pizzas de calabresa</Text>
+                <Text style={{ color: '#fff' }}>Pizza de calabresa</Text>
             </TouchableOpacity>
             <View style={styles.qtdContainer}>
                 <Text style={styles.qtdText}>Quantidade:</Text>
@@ -58,8 +78,8 @@ export default function Order() {
                     style={[styles.input, { width: '60%', textAlign: 'center' }]}
                     placeholderTextColor={'#f0f0f0'}
                     keyboardType={'numeric'}
-                    placeholder={'0'}
-                    value={qtdOrder}
+                    value={qtdAmount}
+                    onChangeText={setQtdAmount}
                 />
             </View>
             <View style={styles.actions}>
