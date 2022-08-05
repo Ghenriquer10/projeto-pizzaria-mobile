@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    TextInput,
+    Modal
+} from 'react-native';
 import { Feather } from '@expo/vector-icons'
 import { api } from '../../services/api';
+import { ModalPicker } from '../../components/ModalPicker';
 
 type RouteDetailParams = {
     Order: {
@@ -11,7 +19,7 @@ type RouteDetailParams = {
     }
 }
 
-type CategoryProps = {
+export type CategoryProps = {
     id: string
     name: string
 }
@@ -47,9 +55,14 @@ export default function Order() {
         }
     }
 
+    function handleSelectedCategory(item: CategoryProps) {
+        setCategorySelected(item)
+    }
+
     const [category, setCategory] = useState<CategoryProps[] | []>([])
     const [categorySelected, setCategorySelected] = useState<CategoryProps>()
     const [qtdAmount, setQtdAmount] = useState('1');
+    const [modalCategoryVisible, setModalCategoryVisible] = useState(false)
 
     const route = useRoute<OrderRouteProps>();
 
@@ -63,7 +76,7 @@ export default function Order() {
             </View>
 
             {category.length !== 0 && (
-                <TouchableOpacity style={styles.input}>
+                <TouchableOpacity onPress={() => setModalCategoryVisible(true)} style={styles.input}>
                     <Text style={{ color: '#fff' }}>
                         {categorySelected?.name}
                     </Text>
@@ -91,6 +104,18 @@ export default function Order() {
                     <Text style={styles.text}>Avançar</Text>
                 </TouchableOpacity>
             </View>
+
+            <Modal
+                transparent={true}
+                visible={modalCategoryVisible}
+                animationType={'fade'}
+            >
+                <ModalPicker
+                    handleModalPicker={() => setModalCategoryVisible(false)}
+                    options={category}
+                    selectedItem={handleSelectedCategory}
+                />
+            </Modal>
         </View>
     )
 }
