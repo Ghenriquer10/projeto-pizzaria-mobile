@@ -6,11 +6,13 @@ import {
     StyleSheet,
     TouchableOpacity,
     TextInput,
-    Modal
+    Modal,
+    FlatList
 } from 'react-native';
 import { Feather } from '@expo/vector-icons'
 import { api } from '../../services/api';
 import { ModalPicker } from '../../components/ModalPicker';
+import { ListItem } from '../../components/ListItem';
 
 type RouteDetailParams = {
     Order: {
@@ -29,8 +31,14 @@ type ProductProps = {
     name: string
 }
 
-type OrderRouteProps = RouteProp<RouteDetailParams, 'Order'>
+type ItemProps = {
+    id: string;
+    product_id: string;
+    name: string;
+    amount: number | string
+}
 
+type OrderRouteProps = RouteProp<RouteDetailParams, 'Order'>
 export default function Order() {
     const navigation = useNavigation()
     const route = useRoute<OrderRouteProps>();
@@ -41,7 +49,7 @@ export default function Order() {
     const [products, setProducts] = useState<ProductProps[] | []>([])
     const [productSelected, setProductSelected] = useState<ProductProps | undefined>()
     const [modalProductVisible, setModalProductVisible] = useState(false)
-
+    const [items, setItem] = useState<ItemProps[]>([])
     useEffect(() => {
         async function loadCategory() {
             const response = await api.get('/category')
@@ -130,10 +138,21 @@ export default function Order() {
                     <Text style={styles.text}>+</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.buttonNext}>
+                <TouchableOpacity
+                    style={[styles.buttonNext, { opacity: items.length === 0 ? 0.3 : 1 }]}
+                    disabled={items.length === 0}
+                >
                     <Text style={styles.text}>Avançar</Text>
                 </TouchableOpacity>
             </View>
+
+            <FlatList
+                showsVerticalScrollIndicator={false}
+                style={{ flex: 1, marginTop: 25 }}
+                data={items}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => <ListItem data={item} />}
+            />
 
             <Modal
                 transparent={true}
