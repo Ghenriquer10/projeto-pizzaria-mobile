@@ -15,7 +15,8 @@ import { Feather } from '@expo/vector-icons'
 import { api } from '../../services/api';
 import { ModalPicker } from '../../components/ModalPicker';
 import { ListItem } from '../../components/ListItem';
-
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { StackParamsList } from '../../routes/app.routes'
 type RouteDetailParams = {
     Order: {
         table: number | string;
@@ -41,8 +42,9 @@ type ItemProps = {
 }
 
 type OrderRouteProps = RouteProp<RouteDetailParams, 'Order'>
+
 export default function Order() {
-    const navigation = useNavigation()
+    const navigation = useNavigation<NativeStackNavigationProp<StackParamsList>>()
     const route = useRoute<OrderRouteProps>();
     const [category, setCategory] = useState<CategoryProps[] | []>([])
     const [categorySelected, setCategorySelected] = useState<CategoryProps | undefined>()
@@ -52,6 +54,7 @@ export default function Order() {
     const [productSelected, setProductSelected] = useState<ProductProps | undefined>()
     const [modalProductVisible, setModalProductVisible] = useState(false)
     const [items, setItem] = useState<ItemProps[]>([])
+
     useEffect(() => {
         async function loadCategory() {
             const response = await api.get('/category')
@@ -131,6 +134,10 @@ export default function Order() {
         setItem(removeItem)
     }
 
+    function handleFinishOrder() {
+        navigation.navigate('FinishOrder');
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -176,6 +183,7 @@ export default function Order() {
                 <TouchableOpacity
                     style={[styles.buttonNext, { opacity: items.length === 0 ? 0.3 : 1 }]}
                     disabled={items.length === 0}
+                    onPress={handleFinishOrder}
                 >
                     <Text style={styles.text}>Avançar</Text>
                 </TouchableOpacity>
