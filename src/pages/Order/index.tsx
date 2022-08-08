@@ -7,7 +7,9 @@ import {
     TouchableOpacity,
     TextInput,
     Modal,
-    FlatList
+    FlatList,
+    TouchableWithoutFeedback,
+    Keyboard
 } from 'react-native';
 import { Feather } from '@expo/vector-icons'
 import { api } from '../../services/api';
@@ -97,14 +99,33 @@ export default function Order() {
         setProductSelected(item)
     }
 
+    // Adicionando produtos da mesa
+    async function handleAdd() {
+        const response = api.post('/order/item', {
+            order_id: route?.params.order_id,
+            product_id: productSelected?.id,
+            amount: Number(qtdAmount)
+        })
+
+        let data = {
+            id: (await response).data.id,
+            product_id: productSelected?.id as string,
+            name: productSelected?.name as string,
+            amount: qtdAmount
+        }
+        setItem(oldArray => [...oldArray, data])
+        setQtdAmount('1')
+    }
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Mesa {route.params.table}</Text>
-                <TouchableOpacity onPress={handleDeleteTable}>
-                    <Feather name='trash-2' size={35} color='red' />
-                </TouchableOpacity>
+                {items.length === 0 && (
+                    <TouchableOpacity onPress={handleDeleteTable}>
+                        <Feather name='trash-2' size={35} color='red' />
+                    </TouchableOpacity>
+                )}
             </View>
 
             {category.length !== 0 && (
@@ -126,7 +147,7 @@ export default function Order() {
             <View style={styles.qtdContainer}>
                 <Text style={styles.qtdText}>Quantidade:</Text>
                 <TextInput
-                    style={[styles.input, { width: '60%', textAlign: 'center' }]}
+                    style={[styles.input, { width: '60%', textAlign: 'center', color: '#fff' }]}
                     placeholderTextColor={'#f0f0f0'}
                     keyboardType={'numeric'}
                     value={qtdAmount}
@@ -134,7 +155,7 @@ export default function Order() {
                 />
             </View>
             <View style={styles.actions}>
-                <TouchableOpacity style={styles.buttonAdd}>
+                <TouchableOpacity style={styles.buttonAdd} onPress={handleAdd}>
                     <Text style={styles.text}>+</Text>
                 </TouchableOpacity>
 
