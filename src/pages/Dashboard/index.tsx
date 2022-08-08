@@ -31,7 +31,7 @@ export default function Dashboard() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Tela de pedido</Text>
+            <Text style={styles.title}>Novo pedido</Text>
 
             <TextInput
                 keyboardType={'numeric'}
