@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: 'http://192.168.0.186:3333'
+    baseURL: 'https://projeto-pizzaria-backend.herokuapp.com'
 })
 
 export { api }
